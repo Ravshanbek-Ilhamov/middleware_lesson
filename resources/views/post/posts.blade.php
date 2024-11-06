@@ -39,7 +39,7 @@
                         <th>Image</th>
                         <th>Count</th>
                         <th>Premium</th>
-                        @if (auth()->check())
+                        @if (auth()->check() && auth()->user()->role)
                             <th>Actions</th>
                         @endif
                     </tr>

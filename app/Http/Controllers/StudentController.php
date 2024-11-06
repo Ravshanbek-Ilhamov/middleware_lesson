@@ -31,15 +31,30 @@ class StudentController extends Controller
      */
     public function store(StoreStudentRequest $request)
     {
-        //
+        // dd($request->all());
+        $student = new Student();
+    
+        $student->name = $request->input('name');
+        $student->phone_number = $request->input('phone_number');
+    
+        if ($request->hasFile('image_path')) {
+            $imagePath = $request->file('image_path')->store('images', 'public');
+            $student->image_path = $imagePath;
+        }
+    
+        $student->save();
+    
+        return redirect()->route('student.index')->with('success', 'Student created successfully!');
     }
+    
 
+    
     /**
      * Display the specified resource.
      */
     public function show(Student $student)
     {
-        //
+        return view('student.student_show',['student'=>$student]);
     }
 
     /**
@@ -87,7 +102,7 @@ class StudentController extends Controller
      */
     public function destroy($id)
     {
-        $student = Student::findOrFail($id);
+        $student = Student::find($id);
     
         if ($student->image_path && Storage::exists('public/' . $student->image_path)) {
             Storage::delete('public/' . $student->image_path);
@@ -95,7 +110,7 @@ class StudentController extends Controller
     
         $student->delete();
     
-        return redirect()->route('students.index')->with('success', 'Student deleted successfully!');
+        return redirect()->route('student.index')->with('success', 'Student deleted successfully!');
     }
     
 }

@@ -49,13 +49,15 @@
                             <td>{{ $item->id }}</td>
                             <td>{{ $item->name }}</td>
                             <td>{{ $item->phone_number }}</td>
-                            <td>{{ $item->image_path }}</td>
+                            <td>
+                                <img width="100px" src="{{ asset('storage/' . $item->image_path) }}" alt="image">
+                            </td>
+                            
                             <td>{{ $item->created_at }}</td>
                             <td>
                                 <div class="d-inline-flex">
 
                                     @if (auth()->check() && (auth()->user()->role == 'admin' || auth()->user()->role == 'edit'))
-                                        {{-- <a class="btn btn-sm btn-primary m-2"> href="/student-edit/{{$item->id}}">Edit</a> --}}
                                         <a href="/student-edit/{{ $item->id }}" class="btn btn-sm btn-warning mr-1">Edit</a>
 
                                     @endif
@@ -94,11 +96,9 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="studentForm" action="" method="POST">
+            <form action="{{ route('student.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
-                    <input type="hidden" id="studentId" name="id">
-                    
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input type="text" class="form-control" id="name" name="name" required>
@@ -110,8 +110,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="image">Image Path</label>
-                        <input type="text" class="form-control" id="image" name="image_path">
+                        <label for="image">Image</label>
+                        <input type="file" class="form-control" id="image" name="image_path">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -119,26 +119,10 @@
                     <button type="submit" class="btn btn-primary" id="submitBtn">Save</button>
                 </div>
             </form>
+            
         </div>
     </div>
 </div>
-
-{{-- <script>
-    $('#editStudentModal').on('show.bs.modal', function(e) {
-        var link = $(e.relatedTarget);  // Get the element that triggered the modal
-        var modal = $(this);  // Reference to the modal itself
-
-        var name = link.data("name");
-        var phone_number = link.data("phone_number");
-        var image_path = link.data("image_path");
-        var email = link.data("email"); 
-
-        modal.find("#name").val(name);
-        modal.find("#phone_number").val(phone_number);
-        modal.find("#image_path").val(image_path);
-        modal.find("#email").val(email);
-    });
-</script> --}}
 
 
 @endsection
