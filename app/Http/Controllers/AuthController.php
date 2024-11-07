@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
@@ -47,6 +48,21 @@ class AuthController extends Controller
             return redirect()->back()->with('error', 'Failed to create user: ' . $e->getMessage());
         }
     }
+
+    public function roles(){
+        $roles = Role::paginate(10);
+        return view('role.role',['roles'=>$roles]);
+    }
+
+    public function toggleStatus($id){
+        $role = Role::findOrFail($id);
+
+        $role->is_active = !$role->is_active;
+        $role->save();
+
+        return redirect('/roles')->with('success', 'Role status updated successfully!');
+    }
+
 
     public function logout(){
         FacadesAuth::logout();

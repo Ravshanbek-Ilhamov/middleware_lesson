@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use App\Models\Role;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -22,9 +24,11 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        Role::factory()->create(['name' => 'HR']);
-        Role::factory()->create(['name' => 'Moderator']);
-        Role::factory()->create(['name' => 'Admin']);
+        Role::factory()->create(['name' => 'category']);
+        Role::factory()->create(['name' => 'post']);
+        Role::factory()->create(['name' => 'student']);
+        Role::factory()->create(['name' => 'company']);
+        Role::factory()->create(['name' => 'admin']);
 
         for ($i=1; $i <=10 ; $i++) { 
             $user = User::create([
@@ -40,9 +44,11 @@ class DatabaseSeeder extends Seeder
             }
             
         }
-        // $this->call([
-            // PostSeeder::class,
-            // StudentSeeder::class,
-        // ]);
+        $this->call([
+            PostSeeder::class,
+            StudentSeeder::class,
+            CategorySeeder::class,
+            CompanySeeder::class
+        ]);
     }
 }

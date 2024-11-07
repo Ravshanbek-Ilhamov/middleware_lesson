@@ -3,12 +3,15 @@
 @section('title', 'Index Page')
 
 @section('content')
+<!-- Select2 CSS -->
+
+<link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet" />
+
 <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <!-- Success and error messages -->
-            <div class="row">
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <strong>{{ session('success') }}</strong>
@@ -26,16 +29,26 @@
                         </button>
                     </div>
                 @endif
+                <!-- "Create User" Button -->
+                <div class="mb-3">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal">
+                        Create User
+                    </button>
+                </div>
+            <div class="row">
 
-                <!-- User table -->
+                <!-- User Table -->
                 <table class="table table-striped table-bordered" id="userTableBody">
                     <thead class="thead-dark">
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Role</th>
-                            <th>Change Role</th>
+                            <th>Roles</th>
+                            <th>Roles</th>
+                            @if (auth()->check() && auth()->user()->role == 'admin')
+                                <th>Change Role</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -44,34 +57,95 @@
                                 <td>{{ $item->id }}</td>
                                 <td>{{ $item->name }}</td>
                                 <td>{{ $item->email }}</td>
-                                <td>{{ $item->role }}</td>
+                                <td>{{ implode(', ', $item->roles_name) }}</td>
+                                {{-- @if (auth()->check() && auth()->user()->role == 'admin') --}}
                                 <td>
-                                    @if (auth()->check() && auth()->user()->role == 'admin')
-                                        <!-- Role selection form -->
-                                        <form action="/user-rolechange/{{ $item->id }}" method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <select name="role" class="form-control form-control-sm" onchange="this.form.submit()">
-                                                <option value="show" {{ $item->role == 'show' ? 'selected' : '' }}>Show</option>
-                                                <option value="delete" {{ $item->role == 'delete' ? 'selected' : '' }}>Delete</option>
-                                                <option value="edit" {{ $item->role == 'edit' ? 'selected' : '' }}>Edit</option>
-                                                <option value="create" {{ $item->role == 'create' ? 'selected' : '' }}>Create</option>
-                                                <option value="admin" {{ $item->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                                            </select>
-                                        </form>
-                                    @else
-                                        {{ $item->role }}
-                                    @endif
+                                <div class="d-inline-flex">
+
+                                    <a href="/user-edit/{{ $item->id }}" class="btn btn-sm btn-warning mr-1">Edit</a>
+
+                                    <form action="/user-delete/{{ $item->id }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                    
+                                    </div>
                                 </td>
+                                {{-- @endif --}}
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
 
-                <!-- Pagination links -->
+                <!-- Pagination Links -->
                 {{ $users->links() }}
             </div>
         </div>
     </section>
 </div>
+
+<!-- Create User Modal -->
+<div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{{ route('user.store') }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createUserModalLabel">Create New User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Name Input -->
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+
+                    <!-- Email Input -->
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+
+                    <!-- Roles Input with Select2 -->
+                    <div class="form-group">
+                        <select id="roles" name="roles[]" multiple>
+                            @foreach ($roles as $role)
+                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const element = document.getElementById('roles');
+        const choices = new Choices(element, {
+            removeItemButton: true,
+            placeholder: true,
+            placeholderValue: "Select roles"
+        });
+    });
+</script>
+
 @endsection

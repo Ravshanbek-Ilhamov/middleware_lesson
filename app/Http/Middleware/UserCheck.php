@@ -14,13 +14,13 @@ class UserCheck
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next,...$roles): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        // dd(Auth::user()->roles,$roles);
-      
-        if (Auth::user()->roles->whereIn('name', $roles)->first()) {
+        $userRoles = Auth::user()->roles->whereIn('name', $roles)->where('is_active', true);
+
+        if ($userRoles->isNotEmpty()) {
             return $next($request);
         }
-        abort(403);
+        abort(403, 'Unauthorized access');
     }
 }
