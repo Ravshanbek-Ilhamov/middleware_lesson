@@ -16,6 +16,24 @@ class UserCheck
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
+
+        // $routname = $request->route()->getName();
+
+        // if(Auth::check()){
+        //     if(Permission::where('key',$routname)->first()){
+        //         $role = Auth::user()->roles->first();
+        //         if ($role->permissions()->where('key',$routname)->exists()) {
+        //             return $next($request);
+        //         }else{
+        //             abort(403);
+        //         }
+            
+        //     }else{
+        //         abort(404);
+        //     }
+        // }else{
+        //     return redirect('/');
+        // }
         $userRoles = Auth::user()->roles->whereIn('name', $roles)->where('is_active', true);
 
         if ($userRoles->isNotEmpty()) {

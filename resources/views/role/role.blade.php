@@ -48,7 +48,6 @@
                                 <td>{{ $item->name }}</td>
                                 @if (auth()->check())
                                     <td>
-                                        <!-- Button to toggle is_active status -->
                                         <form action="{{ route('roles.toggleStatus', $item->id) }}" method="POST">
                                             @csrf
                                             @method('PUT')

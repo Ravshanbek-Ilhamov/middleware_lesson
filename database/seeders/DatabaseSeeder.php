@@ -5,10 +5,13 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route as FacadesRoute;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,11 +27,11 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        Role::factory()->create(['name' => 'category']);
-        Role::factory()->create(['name' => 'post']);
-        Role::factory()->create(['name' => 'student']);
-        Role::factory()->create(['name' => 'company']);
-        Role::factory()->create(['name' => 'admin']);
+        $role1 = Role::factory()->create(['name' => 'category']);
+        $role2 = Role::factory()->create(['name' => 'post']);
+        $role3 = Role::factory()->create(['name' => 'student']);
+        $role4 = Role::factory()->create(['name' => 'company']);
+        $role5 = Role::factory()->create(['name' => 'admin']);
 
         for ($i=1; $i <=10 ; $i++) { 
             $user = User::create([
@@ -37,18 +40,40 @@ class DatabaseSeeder extends Seeder
                 'password'=> Hash::make('qwerty'),
             ]);
             
-            $row = rand(1,3);
+            $row = rand(1,5);
             
             for($k=0;$k<$row;$k++){
-                $user->roles()->attach(rand(1,3));
+                $user->roles()->attach(rand(1,5));
             }
-            
         }
-        $this->call([
-            PostSeeder::class,
-            StudentSeeder::class,
-            CategorySeeder::class,
-            CompanySeeder::class
-        ]);
+
+        $routes = FacadesRoute::getRoutes();
+        
+        foreach ($routes as $route){
+            $key = $route->getName();
+            if ($key && !str_starts_with($key,'generated::') && $key !== 'storage.local') {
+                $name = ucfirst(str_replace('.','-',$key));
+
+                Permission::create([
+                    'key'=>$key,
+                    'name'=>$name
+                ]);
+            } 
+        }
+
+        $permissions = Permission::pluck('id')->toArray();
+
+        $role1->permissions()->attach($permissions);
+        $role2->permissions()->attach($permissions);
+        $role3->permissions()->attach($permissions);
+        $role4->permissions()->attach($permissions);
+        $role5->permissions()->attach($permissions);
+
+        // $this->call([
+        //     PostSeeder::class,
+        //     StudentSeeder::class,
+        //     CategorySeeder::class,
+        //     CompanySeeder::class
+        // ]);
     }
 }
