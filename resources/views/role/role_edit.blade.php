@@ -1,9 +1,34 @@
 @extends('layouts.adminLayout')
 
-@section('title', 'Edit User')
+@section('title', 'Edit Role')
 
 @section('content')
+<!-- Select2 CSS -->
+<style>
+    /* Override the background color and text color of selected items */
+.choices__inner {
+    background-color: #f8f9fa; /* Light gray for better contrast */
+    color: #333; /* Dark text color */
+    border-color: #ced4da; /* Adjust border color if needed */
+}
 
+.choices__list--multiple .choices__item {
+    background-color: #007bff; /* Primary color for selected items */
+    color: white; /* White text on selected items */
+    border-radius: 5px; /* Rounded corners for selected items */
+    padding: 5px 10px; /* Adjust padding for readability */
+}
+
+.choices__list--dropdown .choices__item--selectable {
+    background-color: #ffffff; /* White background for dropdown items */
+    color: #333; /* Dark text color */
+}
+
+.choices__list--dropdown .choices__item--selectable:hover {
+    background-color: #e9ecef; /* Slight hover effect for dropdown items */
+}
+
+</style>
 <!-- Google Font: Source Sans Pro -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 <!-- Font Awesome -->
@@ -15,7 +40,7 @@
 
 <div class="content-wrapper">
     <section class="content">
-        <a href="/users" class="btn btn-primary m-2">Users</a>
+        <a href="/roles" class="btn btn-primary m-2">Roles</a>
         <div class="container-fluid">
             @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -39,63 +64,43 @@
                 <div class="col-md-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Edit User</h3>
+                            <h3 class="card-title">Edit Role</h3>
                         </div>
                         
-                        <form action="{{ route('user.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('role.update', $role->id) }}" method="POST">
                             @csrf
                             @method('PUT')
                             <div class="card-body">
 
                                 <!-- Name -->
                                 <div class="form-group">
-                                    <label for="nameInput">Name</label>
-                                    <input type="text" class="form-control" name="name" id="nameInput" value="{{ $user->name }}">
+                                    <label for="nameInput">Role Name</label>
+                                    <input type="text" class="form-control" name="name" id="nameInput" value="{{ $role->name }}" required>
                                     @error('name')
                                         <label style="color: red">{{ $message }}</label>
                                     @enderror
                                 </div>
 
-                                <!-- Email -->
+                                <!-- Permissions Input with Choices.js -->
                                 <div class="form-group">
-                                    <label for="emailInput">Email</label>
-                                    <input type="email" class="form-control" name="email" id="emailInput" value="{{ $user->email }}">
-                                    @error('email')
-                                        <label style="color: red">{{ $message }}</label>
-                                    @enderror
-                                </div>
-                                    <!-- Roles Input with Select2 -->
-                                    <div class="form-group">
-                                        <select id="roles" name="roles[]" multiple>
-                                            @foreach ($roles as $role)
-                                            <option value="{{ $role->id }}" 
-                                                    @if(in_array($role->id, $user->roles->pluck('id')->toArray())) selected @endif>
-                                                {{ $role->name }}
-                                            </option>
-                                        @endforeach
-
-                                        </select>
-                                        
-                                    </div>
-                                <!-- Roles -->
-                                {{-- <div class="form-group">
-                                    <label for="rolesInput">Roles</label>
-                                    <select multiple class="form-control" name="roles[]" id="rolesInput">
-                                        @foreach ($roles as $role)
-                                            <option value="{{ $role->id }}" 
-                                                    @if(in_array($role->id, $user->roles->pluck('id')->toArray())) selected @endif>
-                                                {{ $role->name }}
+                                    <label for="permissions">Permissions</label>
+                                    <select id="permissions" name="permissions[]" multiple>
+                                        @foreach ($permissions as $permission)
+                                            <option value="{{ $permission->id }}" 
+                                                @if(in_array($permission->id, $role->permissions->pluck('id')->toArray())) selected @endif>
+                                                {{ $permission->name }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    @error('roles')
+                                    @error('permissions')
                                         <label style="color: red">{{ $message }}</label>
                                     @enderror
-                                </div> --}}
+                                </div>
+
                             </div>
 
                             <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Update</button>
+                                <button type="submit" class="btn btn-primary">Update Role</button>
                             </div>
                         </form>
                     </div>
@@ -108,21 +113,16 @@
 <!-- Scripts -->
 <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-<script src="{{ asset('plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
 <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
-<script>
-  $(function () {
-    bsCustomFileInput.init();
-  });
-</script>
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const element = document.getElementById('roles');
+        const element = document.getElementById('permissions');
         const choices = new Choices(element, {
             removeItemButton: true,
             placeholder: true,
-            placeholderValue: "Select roles"
+            placeholderValue: "Select permissions"
         });
     });
 </script>

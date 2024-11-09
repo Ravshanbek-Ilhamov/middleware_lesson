@@ -26,7 +26,7 @@
                 </div>
             @endif
 
-            @if (auth()->check() && (auth()->user()->role == 'admin' || auth()->user()->role == 'create'))
+            @if (auth()->user()->hasPermission('post.create'))
                 <a href="/post-create" class='btn btn-primary m-2'>Create</a>
             @endif
             
@@ -62,11 +62,14 @@
                             <td>
                                 <div class="d-inline-flex">
 
-                                    @if (auth()->check() && (auth()->user()->role == 'admin' || auth()->user()->role == 'edit'))
+                                    {{-- @if (auth()->check() && (auth()->user()->role == 'admin' || auth()->user()->role == 'edit')) --}}
+                                    @if (auth()->user()->hasPermission('post.edit'))
                                         <a href="/post-edit/{{ $item->id }}" class="btn btn-sm btn-warning mr-1">Edit</a>
                                     @endif
 
                                     @if (auth()->check() && (auth()->user()->role == 'admin' || auth()->user()->role == 'delete'))
+                                    {{-- @if (auth()->user()->hasPermission('post.create')) --}}
+
                                         <form action="/post-delete/{{ $item->id }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
@@ -74,7 +77,7 @@
                                         </form>
                                     @endif
 
-                                    @if (auth()->check() && (auth()->user()->role == 'admin' || auth()->user()->role == 'show'))
+                                    @if (auth()->user()->hasPermission('post.show'))
                                         <a href="/post-show/{{ $item->id }}" class="btn btn-sm btn-warning ml-1">Show</a>
                                     @endif
                                 </div>

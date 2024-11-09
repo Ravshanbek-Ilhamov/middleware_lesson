@@ -8,6 +8,12 @@
 <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet" />
 
 <div class="content-wrapper">
+    {{-- @php
+    foreach ($users as $user) {
+        echo '<h4>'. $user->name .'<h4>';
+        echo '<h6>'. $user->roles()->permissions() .'<h6>';
+    }
+    @endphp --}}
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -61,14 +67,18 @@
                                 {{-- @if (auth()->check() && auth()->user()->role == 'admin') --}}
                                 <td>
                                 <div class="d-inline-flex">
-
-                                    <a href="/user-edit/{{ $item->id }}" class="btn btn-sm btn-warning mr-1">Edit</a>
+                                    @if (auth()->user()->hasPermission('user.edit'))
+                                        <a href="/user-edit/{{ $item->id }}" class="btn btn-sm btn-warning mr-1">Edit</a>
+    
+                                    @endif
+                                    @if (auth()->user()->hasPermission('user.destroy'))
 
                                     <form action="/user-delete/{{ $item->id }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                    </form>
+                                    @endif
+                                </form>
                                     
                                     </div>
                                 </td>

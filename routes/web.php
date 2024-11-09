@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -17,10 +18,13 @@ Route::get('/logout',[AuthController::class,'logout'])->name('logout');
 
 
 
-Route::middleware('check:admin')->group(function(){
+Route::middleware('check')->group(function(){
     
-    Route::get('/roles',[AuthController::class,'roles'])->name('auth.roles');
-    Route::put('/roles/{role}/toggle-status', [AuthController::class, 'toggleStatus'])->name('roles.toggleStatus');
+    Route::get('/roles',[RoleController::class,'index'])->name('role.index');
+    Route::get('/role-edit/{role}',[RoleController::class,'edit'])->name('role.edit');
+    Route::put('/role-update/{role}',[RoleController::class,'update'])->name('role.update');
+    Route::post('/role-create',[RoleController::class,'store'])->name('role.store');
+    Route::put('/roles/{role}/toggle-status', [RoleController::class, 'toggleStatus'])->name('roles.toggleStatus');
 
     Route::put('/user-rolechange/{id}', [UserController::class, 'changeUserRole']);
     Route::get('/users',[UserController::class,'index'])->name('user.index');
@@ -60,7 +64,6 @@ Route::middleware('check:student,admin')->group(function(){
 Route::middleware('check:company,admin')->group(function(){
     Route::get('/companies',[CompanyController::class,'index'])->name('company.index');
     Route::delete('/company-delete/{company}',[CompanyController::class,'destroy'])->name('company.destroy');    
-
 });
 
 

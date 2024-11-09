@@ -55,7 +55,9 @@
                             <td>{{ $item->created_at }}</td>
                             <td>
                                 <div class="d-inline-flex">
-                                    @if (auth()->check())
+                                    {{-- @if (auth()->check()) --}}
+                                    @if (auth()->user()->hasPermission('company.destroy'))
+
                                         <form action="/company-delete/{{ $item->id }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')

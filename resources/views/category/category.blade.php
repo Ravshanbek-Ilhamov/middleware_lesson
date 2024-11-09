@@ -32,7 +32,7 @@
             
             <table class="table table-striped table-bordered">
                 <thead class="thead-dark">
-                    <tr>
+                    <tr>    
                         <th>ID</th>
                         <th>Tr</th>
                         <th>Name</th>
@@ -53,8 +53,8 @@
                             <td>{{ $item->created_at }}</td>
                             <td>
                                 <div class="d-inline-flex">
-                                    @if (auth()->check())
-                                    {{-- && (auth()->user()->role == 'admin' || auth()->user()->role == 'category') --}}
+
+                                    @if (auth()->user()->hasPermission('category.destroy'))
                                         <form action="/category-delete/{{ $item->id }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
@@ -67,7 +67,6 @@
                     @endforeach
                 </tbody>
             </table>
-            
             <!-- Pagination -->
             {{ $categories->links() }}
         </div>
@@ -111,6 +110,4 @@
         </div>
     </div>
 </div>
-
-
 @endsection

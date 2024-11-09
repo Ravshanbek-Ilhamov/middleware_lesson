@@ -50,21 +50,6 @@ class AuthController extends Controller
         }
     }
 
-    public function roles(){
-        $roles = Role::paginate(10);
-        return view('role.role',['roles'=>$roles]);
-    }
-
-    public function toggleStatus($id){
-        $role = Role::findOrFail($id);
-
-        $role->is_active = !$role->is_active;
-        $role->save();
-
-        return redirect('/roles')->with('success', 'Role status updated successfully!');
-    }
-
-
     public function logout(){
         FacadesAuth::logout();
         return redirect('/')->with('success', 'You have been logged out.');
