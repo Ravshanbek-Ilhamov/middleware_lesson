@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CompanyController;
@@ -10,12 +11,11 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/',[AuthController::class,'loginPage'])->name('loginPage');
-Route::post('/login',[AuthController::class,'login'])->name('login');
-Route::get('/registeration',[AuthController::class,'registerPage'])->name('registerPage');
-Route::post('/register',[AuthController::class,'register'])->name('register');
-Route::get('/logout',[AuthController::class,'logout'])->name('logout');
-
+// Route::get('/',[AuthController::class,'loginPage'])->name('loginPage');
+// Route::post('/login',[AuthController::class,'login'])->name('login');
+// Route::get('/registeration',[AuthController::class,'registerPage'])->name('registerPage');
+// Route::post('/register',[AuthController::class,'register'])->name('register');
+// Route::get('/logout',[AuthController::class,'logout'])->name('logout');
 
 
 Route::middleware('check')->group(function(){
@@ -34,6 +34,7 @@ Route::middleware('check')->group(function(){
     Route::delete('/user-delete/{user}',[UserController::class,'destroy'])->name('user.destroy');
 
 });
+
 
 Route::middleware('check:post,admin')->group(function(){
 
@@ -74,34 +75,22 @@ Route::middleware('check:category,admin')->group(function(){
 });
 
 
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 
+Route::get('/', function () {
+    return redirect()->route('login'); // Redirect to the new login route
+})->name('loginPage'); // Optional: Update or remove old route name if needed
 
 
+Route::middleware('auth')->group(function () { 
+    
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+require __DIR__.'/auth.php';
