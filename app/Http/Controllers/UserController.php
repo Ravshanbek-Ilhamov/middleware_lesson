@@ -7,10 +7,19 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 
 class UserController extends Controller
 {
     public function index(){
+        // $routes = Route::getRoutes();
+        // $group_names = [];
+        // foreach ($routes as $route) {
+        //     $result = explode('.',$route->getName())[0];
+        //     $group_names[] = $result;
+        // }
+        // $group_names = array_unique($group_names);
+        // dd($group_names);
         $users = User::with('roles')->paginate(15);
     
         $users->getCollection()->transform(function ($user) {

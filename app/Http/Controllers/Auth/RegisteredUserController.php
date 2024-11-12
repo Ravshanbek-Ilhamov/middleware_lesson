@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -27,6 +26,7 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
+    // In RegisteredUserController
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -36,7 +36,7 @@ class RegisteredUserController extends Controller
         ]);
 
         $user = User::create([
-            'name' => $request->name,
+            'name' => $request->name,   
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
@@ -45,6 +45,8 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('user.index'));
+        // Redirect to the intended route instead of the dashboard
+        return redirect()->route('user.index');
     }
+
 }

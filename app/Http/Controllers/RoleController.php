@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use App\Models\Permission;
+use App\Models\PermissionGroup;
 use App\Models\Role;
 
 class RoleController extends Controller
@@ -25,7 +26,8 @@ class RoleController extends Controller
      */
     public function create()
     {
-        //
+        $permissionGroups = PermissionGroup::all();
+        return view('role.role_create',['permissionGroups'=>$permissionGroups]);
     }
 
     /**
@@ -33,15 +35,31 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
+        // dd($request->all());
+
+        // Create the new role
         $role = Role::create([
-            'name' => $request->name,
+            'name' => $request->input('name'),
         ]);
 
+        // Attach selected permissions to the role
         if ($request->has('permissions')) {
-            $role->permissions()->attach($request->permissions);
+            $role->permissions()->attach($request->input('permissions'));
         }
 
+        // Redirect with a success message
         return redirect()->route('role.index')->with('success', 'Role created successfully.');
+
+
+        // $role = Role::create([
+        //     'name' => $request->name,
+        // ]);
+
+        // if ($request->has('permissions')) {
+        //     $role->permissions()->attach($request->permissions);
+        // }
+
+        // return redirect()->route('role.index')->with('success', 'Role created successfully.');
     }
 
     /**
@@ -50,6 +68,11 @@ class RoleController extends Controller
     public function show(Role $role)
     {
         //
+    }
+
+    public function groups(){
+        $permissions = PermissionGroup::all();
+        return view('role.permission_groups',['permissions' => $permissions]);
     }
 
     /**

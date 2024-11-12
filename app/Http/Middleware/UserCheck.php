@@ -17,7 +17,7 @@ class UserCheck
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
         $routeName = $request->route()->getName();
-        dd($routeName);
+        // dd($routeName);
 
         if (Auth::check()) {
             $user = Auth::user();
