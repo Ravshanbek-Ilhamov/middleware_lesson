@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
+use App\Jobs\UserStore;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -49,18 +50,10 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
-        // dd($request->roles);
+        // Dispatch the job to the queue
+        UserStore::dispatch($request->validated());
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        $user->roles()->sync($request->roles);
-
-        return redirect('/users')->with('success', 'User created successfully.');
-    
+        return redirect('/users')->with('success', 'User creation is in progress.');
     }
     public function update(Request $request, $id) {
         $user = User::findOrFail($id);

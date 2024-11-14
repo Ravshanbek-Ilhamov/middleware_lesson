@@ -104,44 +104,6 @@
             </p>
           </a>
 
-          <a href="/posts" class="nav-link">
-            <i class="nav-icon fas fa-chart-pie"></i>
-            <p>
-              Posts
-            </p>
-          </a>
-
-          <a href="/students" class="nav-link">
-            <i class="nav-icon fas fa-chart-pie"></i>
-            <p>
-              Students
-            </p>
-          </a>
-
-
-
-          <a href="/companies" class="nav-link">
-            <i class="nav-icon fas fa-chart-pie"></i>
-            <p>
-              Companies
-            </p>
-          </a>
-
-
-          <a href="/categories" class="nav-link">
-            <i class="nav-icon fas fa-chart-pie"></i>
-            <p>
-              Categories
-            </p>
-          </a>
-
-          <a href="/roles" class="nav-link">
-            <i class="nav-icon fas fa-chart-pie"></i>
-            <p>
-              Roles
-            </p>
-          </a>
-
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

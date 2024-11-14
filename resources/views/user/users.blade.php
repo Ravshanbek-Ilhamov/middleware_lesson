@@ -37,8 +37,11 @@
                 @endif
                 <!-- "Create User" Button -->
                 <div class="mb-3">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal">
+                    {{-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal">
                         Create User
+                    </button> --}}
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal">
+                        Create 300k User
                     </button>
                 </div>
             <div class="row">
@@ -138,7 +141,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Create User</button>
+                    <button type="submit" class="btn btn-primary">Create 300k User</button>
                 </div>
             </form>
         </div>
