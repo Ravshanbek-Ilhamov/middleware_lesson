@@ -32,7 +32,16 @@
 <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet" />
 
 <div class="content-wrapper">
+    {{-- @php
+    foreach ($roles as $user) {
+        echo '<h4>'. $user->name .'<h4>';
+            foreach ($user->permissions as $perm) {
+                echo '<h6>'. $perm->name .'<h6>';
 
+            }
+        // echo '<h6>'. $user->permissions .'<h6>';
+    }
+    @endphp --}}
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -54,11 +63,12 @@
                     </button>
                 </div>
             @endif
-
             <div class="mb-3">
-                <a href="{{route('role.create')}}" class="btn btn-primary">Create Role</a>
-
+                <button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#createRoleModal">
+                    Create Group
+                </button>
             </div>
+
             <div class="row">
                 <!-- Role Table -->
                 <table class="table table-striped table-bordered" id="userTableBody">
@@ -66,43 +76,19 @@
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            @if (auth()->check())
-                                <th>Change Activity</th>
-                            @endif
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($roles as $item)
+                        @foreach ($permissions as $item)
                             <tr>
                                 <td>{{ $item->id }}</td>
                                 <td>{{ $item->name }}</td>
-                                @if (auth()->check())
-                                    <td>
-                                    <div class="d-inline-flex">
-
-                                    @if (auth()->user()->hasPermission('role.edit'))
-                                        <a href="/role-edit/{{$item->id}}" class="btn btn-sm btn-warning mr-2" style="display:inline;">Edit</a>
-                                    @endif
-
-                                    @if (auth()->user()->hasPermission('roles.toggleStatus'))
-
-                                        <form action="{{ route('roles.toggleStatus', $item->id) }}" method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-{{ $item->is_active ? 'danger' : 'success' }} btn-sm" style="display:inline;">
-                                                {{ $item->is_active ? 'Deactivate' : 'Activate' }}
-                                            </button>
-                                        </form>
-                                    @endif
-                                    </div>
-                                    </td>
-                                @endif
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
                 <!-- Pagination Links -->
-                {{ $roles->links() }}
+                {{-- {{ $permissions->links() }} --}}
             </div>
         </div>
     </section>

@@ -57,6 +57,15 @@ class User extends Authenticatable
             $query->where('key', $permission);
         })->exists();
     }
+
+    protected static function booted()
+{
+    static::created(function ($user) {
+        // Assign default role, e.g., "user" with `role_id` of 2
+        $user->roles()->attach(2);
+    });
+}
+
     
     
 }

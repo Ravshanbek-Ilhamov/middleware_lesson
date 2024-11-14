@@ -41,7 +41,7 @@
       </li>
 
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="/logout" class="nav-link">Logout</a>
+          <a href="{{route('profile.destroy')}}" class="nav-link">Logout</a>
         </li>
 
       @else
@@ -74,9 +74,9 @@
         <div class="image">
           <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
-        <div class="info">
+        {{-- <div class="info">
           <a href="#" class="d-block">{{auth()->user()->roles}}</a>
-        </div>
+        </div> --}}
       </div>
 
       <!-- SidebarSearch Form -->

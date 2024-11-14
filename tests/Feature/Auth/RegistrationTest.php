@@ -15,5 +15,9 @@ test('new users can register', function () {
     ]);
 
     $this->assertAuthenticated();
+<<<<<<< HEAD
     $response->assertRedirect(route('dashboard', absolute: false));
+=======
+    $response->assertRedirect(route('login', absolute: false));
+>>>>>>> 87170ce4b13aa439ead98cffd0956f6620afb6eb
 });

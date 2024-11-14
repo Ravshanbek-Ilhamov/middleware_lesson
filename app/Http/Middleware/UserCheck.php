@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use App\Models\Permission;
@@ -17,29 +16,35 @@ class UserCheck
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
+        $routeName = $request->route()->getName();
+        // dd($routeName);
 
-        $routname = $request->route()->getName();
-        // dd(Permission::where('key',$routname)->first());
-        if(Auth::check()){
-            if(Permission::where('key',$routname)->first()){
-                $role = Auth::user()->roles->first();
-                if ($role->permissions()->where('key',$routname)->exists()) {
-                    return $next($request);
-                }else{
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            $userRole = $user->roles->first(); 
+
+            if ($userRole && $userRole->permissions->isEmpty()) {
+                $defaultPermissions = Permission::whereHas('roles', function ($query) use ($userRole) {
+                    $query->where('roles.id', $userRole->id);
+                })->pluck('id');
+
+                $userRole->permissions()->syncWithoutDetaching($defaultPermissions);
+            }
+
+            $permission = Permission::where('key', $routeName)->first();
+
+            if ($permission) {
+                if ($userRole && $userRole->permissions->contains($permission)) {
+                    return $next($request); 
+                } else {
                     abort(403);
                 }
-            
-            }else{
-                abort(404);
+            } else {
+                abort(404); 
             }
-        }else{
+        } else {
             return redirect('/');
         }
-        // $userRoles = Auth::user()->roles->whereIn('name', $roles)->where('is_active', true);
-
-        // if ($userRoles->isNotEmpty()) {
-        //     return $next($request);
-        // }
-        // abort(403, 'Unauthorized access');
     }
 }

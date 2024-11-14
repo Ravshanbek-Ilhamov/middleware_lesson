@@ -7,6 +7,8 @@ use App\Http\Controllers\ProfileController;
 // });
 
 
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CompanyController;
@@ -14,16 +16,14 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
 
 
-Route::get('/',[AuthController::class,'loginPage'])->name('loginPage');
-Route::post('/login',[AuthController::class,'login'])->name('login');
-Route::get('/registeration',[AuthController::class,'registerPage'])->name('registerPage');
-Route::post('/register',[AuthController::class,'register'])->name('register');
-Route::get('/logout',[AuthController::class,'logout'])->name('logout');
-
-
+Route::get('/role-create',[RoleController::class,'create'])->name('role.create');
+Route::get('/role-store',[RoleController::class,'store'])->name('role.store');
 
 Route::middleware('check')->group(function(){
     
@@ -31,16 +31,17 @@ Route::middleware('check')->group(function(){
     Route::get('/role-edit/{role}',[RoleController::class,'edit'])->name('role.edit');
     Route::put('/role-update/{role}',[RoleController::class,'update'])->name('role.update');
     Route::post('/role-create',[RoleController::class,'store'])->name('role.store');
-    Route::put('/roles/{role}/toggle-status', [RoleController::class, 'toggleStatus'])->name('roles.toggleStatus');
 
-    Route::put('/user-rolechange/{id}', [UserController::class, 'changeUserRole']);
+    Route::put('/roles/{role}/toggle-status', [RoleController::class, 'toggleStatus'])->name('role.toggleStatus');
     Route::get('/users',[UserController::class,'index'])->name('user.index');
+    Route::put('/user-rolechange/{id}', [UserController::class, 'changeUserRole']);
     Route::get('/user-edit/{user}', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/user-update/{id}', [UserController::class, 'update'])->name('user.update');
     Route::post('/user-store',[UserController::class,'store'])->name('user.store');
     Route::delete('/user-delete/{user}',[UserController::class,'destroy'])->name('user.destroy');
 
 });
+
 
 Route::middleware('check:post,admin')->group(function(){
 

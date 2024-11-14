@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Permission;
+use App\Models\PermissionGroup;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -16,16 +17,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create roles
-        $role1 = Role::factory()->create(['name' => 'category']);
-        $role2 = Role::factory()->create(['name' => 'post']);
-        $role3 = Role::factory()->create(['name' => 'student']);
-        $role4 = Role::factory()->create(['name' => 'company']);
-        $role5 = Role::factory()->create(['name' => 'admin']);
+        $roles = [
+            'category', 'post', 'student', 'company', 'admin'
+        ];
+        
+        $roleIds = [];
+        foreach ($roles as $roleName) {
+            $role = Role::factory()->create(['name' => $roleName]);
+            $roleIds[] = $role->id;
+        }
 
-        $roles = [$role1->id, $role2->id, $role3->id, $role4->id, $role5->id];
-
-        // Create users and assign each one a single role
         for ($i = 1; $i <= 10; $i++) { 
             $user = User::create([
                 'name' => 'User' . $i,
@@ -33,37 +34,55 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('qwerty'),
             ]);
 
-            // Assign a single random role to the user
-            $user->roles()->attach($roles[array_rand($roles)]);
+            $user->roles()->attach($roleIds[array_rand($roleIds)]);
         }
 
-        // Assign permissions to roles based on routes
         $routes = FacadesRoute::getRoutes();
+        $groupNames = [];
+
+        foreach ($routes as $route) {
+            $key = $route->getName();
+            if ($key && !str_starts_with($key, 'generated::') && $key !== 'storage.local') {
+                $group = explode('.', $key)[0];
+                if ($group) {
+                    $groupNames[$group] = true;
+                }
+            }
+        }
+
+        foreach (array_keys($groupNames) as $name) {
+            PermissionGroup::create(['name' => $name]);
+        }
 
         foreach ($routes as $route) {
             $key = $route->getName();
             if ($key && !str_starts_with($key, 'generated::') && $key !== 'storage.local') {
                 $name = ucfirst(str_replace('.', '-', $key));
-
-                Permission::create([
-                    'key' => $key,
-                    'name' => $name,
-                ]);
+                $group = explode('.', $key)[0];
+                
+                $permissionGroup = PermissionGroup::where('name', $group)->first();
+                
+                if ($permissionGroup) {
+                    Permission::create([
+                        'key' => $key,
+                        'permission_group_id' => $permissionGroup->id,
+                        'name' => $name,
+                    ]);
+                }
             }
         }
 
-        // Attach all permissions to each role
         $permissions = Permission::pluck('id')->toArray();
-        foreach ($roles as $roleId) {
+        foreach ($roleIds as $roleId) {
             Role::find($roleId)->permissions()->attach($permissions);
         }
 
         // Uncomment if additional seeders are needed
-        // $this->call([
-        //     PostSeeder::class,
-        //     StudentSeeder::class,
-        //     CategorySeeder::class,
-        //     CompanySeeder::class,
-        // ]);
+        $this->call([
+            PostSeeder::class,
+            StudentSeeder::class,
+            CategorySeeder::class,
+            CompanySeeder::class,
+        ]);
     }
 }
